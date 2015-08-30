@@ -37,9 +37,9 @@ def analyze(n, k, t, samples):
 
 N = 1000 # starting bank balance
 K = None # amount paid for each bet, specified below
-T = 2*N # target bank balance
+T = 99*N # target bank balance
 
-for K in range(3,20):
+for K in range(3,12):
     print K, analyze(N, K, T, 100)
 
 def cutoff(N):
