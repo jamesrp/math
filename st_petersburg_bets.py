@@ -21,8 +21,10 @@ def simulate(n, k, t):
     # Note that this could go on arbitrarily long, but by random walks hopefully
     # it does not.
     while True:
+        b = bet()
+        print balance, b
         balance -= k
-        balance += bet()
+        balance += b
         if balance >= t:
             return True
         if balance < k:
@@ -39,8 +41,8 @@ N = 1000 # starting bank balance
 K = None # amount paid for each bet, specified below
 T = 99*N # target bank balance
 
-for K in range(3,12):
-    print K, analyze(N, K, T, 100)
+#for K in range(3,12):
+#    print K, analyze(N, K, T, 100)
 
 def cutoff(N):
     t = math.log(N) / math.log(2)
@@ -51,4 +53,4 @@ def cutoff(N):
         x += 1
     return x
 
-print cutoff(1000)
+#print cutoff(1000)
