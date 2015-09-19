@@ -8,8 +8,11 @@ def step():
 def simulate_bool(fn, k=100):
     return sum(1 for _ in xrange(k) if fn())/float(k)
 
-def double_covered_while_single_covering_half():
-    n = 1000
+def avg(fn, k=100):
+    return sum(fn() for _ in xrange(k))/float(k)
+
+def f():
+    n, k = 1000, 400
     counts = [1] + [0]*(n-1)
     pos = 0
     while pos < n-1:
@@ -18,6 +21,7 @@ def double_covered_while_single_covering_half():
         else:
             pos += step()
         counts[pos] += 1
-    return all(x >= 2 for x in counts[:n/2])
+    return min(x for x in xrange(n) if counts[x] < 2)
+    # return all(x >= 2 for x in counts[:k])
 
-print simulate_bool(double_covered_while_single_covering_half,50)
+print avg(f)
