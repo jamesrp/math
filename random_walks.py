@@ -49,6 +49,11 @@ def pd(c):
     for x in c:
         print x[0], x[1]
 
+# TODO - can we speed this up by compressing data?
+# E.g., if we are at position x in [a, b] which is all already double-covered,
+# we know probability of getting to a-1 or b+1 first, and thus double-covering
+# that (or single-covering if b+1 was not visited yet).
+
 c = walk2(100)
 pe(c)
 pd(to_intervals(c))
