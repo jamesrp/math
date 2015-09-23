@@ -1,4 +1,4 @@
-import random
+import random, collections, itertools
 
 def step():
     if random.randrange(2) == 0:
@@ -11,8 +11,8 @@ def simulate_bool(fn, k=100):
 def avg(fn, k=100):
     return sum(fn() for _ in xrange(k))/float(k)
 
-def f():
-    n, k = 1000, 400
+def walk(n):
+    # Walk on [0,n-1] until hit n-1. Return visited counts.
     counts = [1] + [0]*(n-1)
     pos = 0
     while pos < n-1:
@@ -21,7 +21,34 @@ def f():
         else:
             pos += step()
         counts[pos] += 1
-    return min(x for x in xrange(n) if counts[x] < 2)
-    # return all(x >= 2 for x in counts[:k])
+    return counts
 
-print avg(f)
+def walk2(n):
+    c = walk(n)
+    return [min(x,2) for x in c]
+
+def to_intervals(counts):
+    d = collections.defaultdict(list)
+    curr = None
+    l = 0
+    for e, x in enumerate(counts):
+        if x == curr:
+            continue
+        if curr != None:
+            d[curr].append((l, e-1))
+        curr = x
+        l = e
+    d[curr].append((l, e-1))
+    return d.items()
+
+def pe(c):
+    for e, x in enumerate(c):
+        print e, x
+
+def pd(c):
+    for x in c:
+        print x[0], x[1]
+
+c = walk2(100)
+pe(c)
+pd(to_intervals(c))
