@@ -54,6 +54,5 @@ def pd(c):
 # we know probability of getting to a-1 or b+1 first, and thus double-covering
 # that (or single-covering if b+1 was not visited yet).
 
-c = walk2(100)
-pe(c)
+c = walk2(1000)
 pd(to_intervals(c))
