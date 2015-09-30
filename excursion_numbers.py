@@ -1,6 +1,13 @@
 from fractions import Fraction
+import pickle
 # http://pastebin.com/7RDUhi42
-cache = {}
+
+filename = "excursions_cache.pickle"
+try:
+    with open(filename, "r") as f:
+        cache = pickle.load(f)
+except:
+    cache = {}
 
 def f(r): 
     if r in cache:
@@ -11,12 +18,24 @@ def f(r):
         val = Fraction(0,1)
     else:
         val = Fraction(1,1)
-        val -= Fraction(1,r)
-        val -= sum(Fraction(1,2*(r-x))*f(x) for x in range(1,r))
+        val -= sum(f2(x,r) for x in range(r))
     cache[r] = val
     return val
 
-for i in [2**i for i in range(14)]:
-    val = f(i)
-    #print "{name:5s} = {dec:5f} = {frac}".format(name="p_%d"%i, dec=float(val),frac=val)
-    print "{name:5s} = {dec:5f}".format(name="p_%d"%i, dec=float(val))
+def f2(i,r):
+    if i == 0:
+        return Fraction(1,r)
+    elif i == r:
+        return f(r)
+    else:
+        return Fraction(1,2*(r-i))*f(i)
+
+def lower_part(r,k):
+    return sum(f2(i,r) for i in range(k))
+
+for i in range(50,500,10):
+    val = lower_part(i,9*i/10)
+    print "{name:5s} = {dec:5f}".format(name="L_%d"%i,dec=float(val))
+
+with open(filename, "w") as g:
+    pickle.dump(cache, g)
