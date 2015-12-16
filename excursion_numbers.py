@@ -33,7 +33,7 @@ def f2(i,r):
 def lower_part(r,k):
     return sum(f2(i,r) for i in range(k))
 
-for i in range(50,500,10):
+for i in range(50,1500,10):
     val = lower_part(i,9*i/10)
     print "{name:5s} = {dec:5f}".format(name="L_%d"%i,dec=float(val))
 

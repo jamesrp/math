@@ -27,6 +27,26 @@ def walk2(n):
     c = walk(n)
     return [min(x,2) for x in c]
 
+def kcover(n, k):
+    counts = [1] + [0]*n
+    todo = n+1
+    if k == 1:
+        todo = n
+    i = 0
+    steps = 0
+    while todo > 0:
+        if i == 0:
+            i = 1
+        elif i == n:
+            i = n-1
+        else:
+            i += step()
+        steps += 1
+        counts[i] += 1
+        if counts[i] == k:
+            todo -= 1
+    return steps
+
 def to_intervals(counts):
     d = collections.defaultdict(list)
     curr = None
@@ -54,5 +74,5 @@ def pd(c):
 # we know probability of getting to a-1 or b+1 first, and thus double-covering
 # that (or single-covering if b+1 was not visited yet).
 
-c = walk2(1000)
-pd(to_intervals(c))
+for n in [10,20,40]:
+    print n, avg(lambda: kcover(n,1), 10000)
