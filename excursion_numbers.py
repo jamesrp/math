@@ -1,5 +1,6 @@
 from fractions import Fraction
 import pickle
+import  math
 # http://pastebin.com/7RDUhi42
 
 filename = "excursions_cache.pickle"
@@ -9,6 +10,15 @@ try:
 except:
     cache = {}
 
+# f_r and f_{i,r} are defined together, and related by the recurrences below.
+# f_{i,r} ranging over i for fixed r is the distribution of the leftmost
+# single covered point when we first reach r.
+# To derive the formulas, consider a Markov chain with state space (i,r)
+# with i = LSC and r = rightmost reached point.
+# Initial values for r = 1, 2, 3 (for i = 0, ..., r):
+# 0 1
+# 1/2 0 1/2
+# 1/3 0 1/4 5/12
 def f(r): 
     if r in cache:
         return cache[r]
@@ -33,9 +43,18 @@ def f2(i,r):
 def lower_part(r,k):
     return sum(f2(i,r) for i in range(k))
 
-for i in range(50,1500,10):
-    val = lower_part(i,9*i/10)
-    print "{name:5s} = {dec:5f}".format(name="L_%d"%i,dec=float(val))
+# The following function computes E((r-i)^2) over f2(i,r). This is the 
+# expected time to reach the LSC point, given that we start at r.
+# That is, C_2 - C_1.
+def extra_dct(r):
+    total = Fraction(0,1)
+    for i in range(r):
+        total += (r-i)**2 * f2(i,r)
+    return total
+
+for r in [10*i for i in range(40)]:
+    c = float(extra_dct(r))
+    print r, c, math.log(c)/math.log(r)
 
 with open(filename, "w") as g:
     pickle.dump(cache, g)
