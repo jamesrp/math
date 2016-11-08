@@ -28,13 +28,18 @@ def walk2(n):
     return [min(x,2) for x in c]
 
 def kcover(n, k):
+    # how many times node i was visited
     counts = [1] + [0]*n
-    todo = n+1
-    if k == 1:
-        todo = n
+    # todo[i-1] == how many x, 0 <= x <= n, have counts[x] < i
+    # (for 1 <= i <= k)
+    todo = [n] + [n+1]*(k-1)
+    # times[i-1] == how long it took to i-cover
+    times = []
     i = 0
     steps = 0
-    while todo > 0:
+    # The level we are currently attempting.
+    curr_level = 1
+    while curr_level <= k:
         if i == 0:
             i = 1
         elif i == n:
@@ -43,9 +48,12 @@ def kcover(n, k):
             i += step()
         steps += 1
         counts[i] += 1
-        if counts[i] == k:
-            todo -= 1
-    return steps
+        if counts[i] <= k:
+            todo[counts[i]-1] -= 1
+            if todo[counts[i] - 1] == 0 and counts[i] == curr_level:
+                times.append(steps)
+                curr_level += 1
+    return times
 
 def to_intervals(counts):
     d = collections.defaultdict(list)
@@ -74,5 +82,18 @@ def pd(c):
 # we know probability of getting to a-1 or b+1 first, and thus double-covering
 # that (or single-covering if b+1 was not visited yet).
 
-for n in [10,20,40]:
-    print n, avg(lambda: kcover(n,1), 10000)
+def avg_list(ls, n, k):
+    out = [0 for _ in range(k)]
+    for x in ls:
+        if len(x) != k:
+            raise ValueError("len({0}) != {1}".format(x, k))
+        for i in range(k):
+            out[i] += x[i]
+    return [out[i]/float(n) for i in range(k)]
+
+samples = 1000000
+k = 2
+for n in range(5,15,3):
+    ls = (kcover(n, k) for _ in xrange(samples))
+    out = avg_list(ls, samples, k)
+    print n, out[1] - out[0], out

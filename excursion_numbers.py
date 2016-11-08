@@ -52,9 +52,8 @@ def extra_dct(r):
         total += (r-i)**2 * f2(i,r)
     return total
 
-for r in [10*i for i in range(40)]:
-    c = float(extra_dct(r))
-    print r, c, math.log(c)/math.log(r)
+for i in range(5,15,3):
+    print i, float(extra_dct(i))
 
 with open(filename, "w") as g:
     pickle.dump(cache, g)
