@@ -1,0 +1,16 @@
+why does wythoff's game have a solution ( (floor(k phi), floor(k phi*2) )?
+
+( (floor(k phi), floor(k phi*2) ) = ( (floor(k phi), floor(k phi) + k)
+
+Lemma 1: because these are a Beatty sequence, there is exactly one per row/column.
+
+Theorem: these are exactly the losing pairs.
+By induction on |(a,b)| = a+b, these are the only losing pairs with difference k.
+If we move in a diagonal to (nk - i, nk + k - i), this has difference k and is by hypothesis
+a winning position.
+If we move to (nk - i, nk + k), this has difference > k and is again winning.
+If we move to (nk, nk + k - i), this has difference k - i. Now take
+(n_{k-i}, n_{k-i} + k-i). We have n_{k-i} < n_k, so we can move to the latter.
+
+https://en.wikipedia.org/wiki/Beatty_sequence#Generalizations states that such sequences don't exist for n >= 3, so one wonders what happens if we play a generalized game where
+there are three piles, and you can take from a single pile, or the same amount from all three piles. Or perhaps you can take the same amount from any two piles.
