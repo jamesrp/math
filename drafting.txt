@@ -1,0 +1,45 @@
+Drafting model intended to investigate staying open and reading signals,
+and see whether there's a game-theory effect here. I suspect there is just
+based on the fact that it's probably better to stay open a little longer
+than everyone else does. Interested to see if there's anything precise we can
+say.
+
+Model is: 8 players booster-draft 3 packs of 15 cards left-right-left.
+Cards are a tuple (color, value), with color = 1,2,3,4,5 and value in R.
+After the 45 cards are picked, a player's score is the best sum they can
+make using up to 23 cards from up to 2 colors. This is a simplified model that
+ignores card synergies and splashing, but it seems close enough to a real
+draft that we can learn from it.
+
+My first goal is to run a tournament to see what the evolutionarily stable
+strategies look like. I'll parametrize strategies like so:
+a) Initial color biases C_1 ... C_5.
+b) An interpolation type LINEAR or CUTOFF.
+c) A number of picks over which to interpolate, k.
+
+A strategy will always pick the best card of a given color available: it won't pick a blue 8 over a blue 10. So the goal of a strategy is just to look at the top card per color, and compare to either its biases, or its existing picks. Suppose x1 ... x5 are the best cards in each color. The bias-aware pick is that which
+maximizes C_i + x_i. The pool-aware pick is that which maximizes S_i + S_j + x_i
+where we are allowed to pick the other color j arbitrarily. (This lets us ever
+pick a second color.)
+
+A LINEAR strategy with parameter k will make picks 2 through k-1 using a
+combination of biases and pool. Normalize the bias and pool score for each color
+and take the overall score to be n/k * bias + (k-n)/k * pool.
+
+A CUTOFF strategy with parameter k will make picks 1 through k-1 using bias
+scores, and thereafter switch to pool scores.
+
+API notes:
+Drafters are implemented as objects with a method select(pack). To make things simpler, we use the honor system and
+let the drafters manage their own objective function and draft picks. select(pack) returns None; it mutates pack
+to remove the drafted card.
+
+
+Optimization notes:
+Drafters need to maintain their current pool, and in general consider 5 possible options to add to it.
+For each option x, they need to compute score(pool + x) to know which is best.
+We maintain the pool as a heap of values in each color pair. For each color pair, maintain a running score of the deck so far. Then when we draft a card, we 
+Instead of implementing score(pool) on its own, we implement score(pool, card). Semantically this just means
+score(pool + card) but we avoid updating the pool for the 4 of 5 cards we don't end up drafting.
+Then, we implement score(pool) as score(pool, (0, -1000)) for the final pool scoring.
+Score(pool, card) can be implemented by first checking whether the card is useful (eg it adds anything to the 4 color pairs it's in). Then return the max of the 10 color pair values.
